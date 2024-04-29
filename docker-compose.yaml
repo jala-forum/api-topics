@@ -1,0 +1,57 @@
+version: "3.8"
+services:
+  cis_project:
+    container_name: cis_project
+    build:
+      dockerfile: Dockerfile
+      context: "."
+    image: spring-boot-playground:latest
+    ports:
+      - '8080:8080'
+      - '35729:35729'
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.url": "jdbc:mysql://cis_project_mysql:3306/store?useSSL=false&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true",
+        "spring.datasource.username": "root",
+        "spring.datasource.password": "root",
+        "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.MySQL8Dialect",
+        "spring.jpa.hibernate.ddl-auto" : "update"
+      }'
+    command: sh entrypoint-docker.sh
+    volumes:
+      - ./:/app/
+    depends_on:
+      - mongodb
+    networks:
+      - lab4-network
+  cis_project_mysql:
+    image: mysql:latest
+    container_name: cis_project_mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=store
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - lab4-db:/var/lib/mysql
+    networks:
+      - lab4-network
+  mongodb:
+    image: "mongo:latest"
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=database
+      - MONGODB_DATA_DIR=/data/db
+      - MONDODB_LOG_DIR=/dev/null
+    volumes:
+      - mongo:/data/db
+    networks:
+      - lab4-network
+volumes:
+  mongo:
+  lab4-db:
+networks:
+  lab4-network:
