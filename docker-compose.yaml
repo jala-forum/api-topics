@@ -1,29 +1,5 @@
 version: "3.8"
 services:
-  cis_project:
-    container_name: cis_project
-    build:
-      dockerfile: Dockerfile
-      context: "."
-    image: spring-boot-playground:latest
-    ports:
-      - '8080:8080'
-      - '35729:35729'
-    environment:
-      SPRING_APPLICATION_JSON: '{
-        "spring.datasource.url": "jdbc:mysql://cis_project_mysql:3306/store?useSSL=false&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true",
-        "spring.datasource.username": "root",
-        "spring.datasource.password": "root",
-        "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.MySQL8Dialect",
-        "spring.jpa.hibernate.ddl-auto" : "update"
-      }'
-    command: sh entrypoint-docker.sh
-    volumes:
-      - ./:/app/
-    depends_on:
-      - mongodb
-    networks:
-      - lab4-network
   cis_project_mysql:
     image: mysql:latest
     container_name: cis_project_mysql
